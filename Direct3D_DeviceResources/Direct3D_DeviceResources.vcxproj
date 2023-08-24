@@ -202,6 +202,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="ReadShaderBytecode.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="Torus.h" />
     <ClInclude Include="VertexTypes.h" />
@@ -270,6 +271,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Point.cpp" />
+    <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Torus.cpp" />
     <ClCompile Include="VertexTypes.cpp" />
   </ItemGroup>

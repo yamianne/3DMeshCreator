@@ -81,6 +81,9 @@
     <ClInclude Include="Torus.h">
       <Filter>Shapes</Filter>
     </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Shapes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -131,6 +134,9 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="Torus.cpp">
+      <Filter>Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
       <Filter>Shapes</Filter>
     </ClCompile>
   </ItemGroup>

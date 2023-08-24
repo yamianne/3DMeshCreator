@@ -10,6 +10,7 @@
 #include "Application.h"
 #include "Point.h"
 #include "Torus.h"
+#include "Sphere.h"
 #include "VertexTypes.h"
 #include "MatrixTransformations.h"
 
@@ -181,6 +182,13 @@ void Application::RenderGUI()
                 float R = 1.0f * (rand() % 9 + 2);
                 m_meshes.push_back(new Torus(m_deviceResources->GetD3DDevice(), n, m, r, R));
             }
+            if (ImGui::MenuItem("Sphere", "CTRL+S"))
+            {
+                int n = rand() % 18 + 3;
+                int m = rand() % 18 + 3;
+                float r = 0.5f * (rand() % 9 + 1);
+                m_meshes.push_back(new Sphere(m_deviceResources->GetD3DDevice(), n, m, r));
+            }
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
@@ -225,6 +233,22 @@ void Application::RenderGUI()
             if (ImGui::SliderFloat("Major radius", &torus->GetMajorRadius(), 0.1f, 50.0f))
             {
                 torus->RecalculateGeometry(m_deviceResources->GetD3DDevice());
+            }
+        }
+        Sphere* sphere = dynamic_cast<Sphere*>(*selectedObjectIt);
+        if (sphere != nullptr)
+        {
+            if (ImGui::SliderInt("Sphere division N", &sphere->GetDivisionN(), 3, 100))
+            {
+                sphere->RecalculateGeometry(m_deviceResources->GetD3DDevice());
+            }
+            if (ImGui::SliderInt("Sphere division M", &sphere->GetDivisionM(), 3, 100))
+            {
+                sphere->RecalculateGeometry(m_deviceResources->GetD3DDevice());
+            }
+            if (ImGui::SliderFloat("Sphere radius", &sphere->GetRadius(), 0.1f, 50.0f))
+            {
+                sphere->RecalculateGeometry(m_deviceResources->GetD3DDevice());
             }
         }
         ImGui::End();
@@ -374,6 +398,7 @@ void Application::CreateDeviceDependentResources()
     m_meshes.push_back(new Point(device, Vector3{ 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }));
     m_meshes.push_back(new Point(device, Vector3{ 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }));
     m_meshes.push_back(new Torus(device));
+    m_meshes.push_back(new Sphere(device));
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
