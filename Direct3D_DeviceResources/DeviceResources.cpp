@@ -259,6 +259,7 @@ void DeviceResources::CreateDeviceResources()
     m_cbWindowAspectRatio.Create(m_d3dDevice.Get());
     m_cbViewMatrix.Create(m_d3dDevice.Get());
     m_cbProjectionMatrix.Create(m_d3dDevice.Get());
+    m_cbLighting.Create(m_d3dDevice.Get());
 }
 
 // These resources need to be recreated every time the window size is changed.
@@ -443,11 +444,20 @@ void DeviceResources::UpdateConstantBuffer(int width, int height)
     m_d3dContext->VSSetConstantBuffers(2, 1, &buffer);
 }
 
-void DeviceResources::UpdateViewMatrixCB(Matrix& viewMatrix)
+void DeviceResources::UpdateViewMatrixCB(Vector3 camPos, Matrix& viewMatrix, Matrix& invviewMatrix)
 {
-    m_cbViewMatrix.SetData(m_d3dContext.Get(), viewMatrix);
+    DirectX::XMMATRIX matrices[2] = {viewMatrix, invviewMatrix};
+    m_cbViewMatrix.SetData(m_d3dContext.Get(), matrices);
     auto buffer = m_cbViewMatrix.GetBuffer();
     m_d3dContext->VSSetConstantBuffers(1, 1, &buffer);
+
+    Lighting l = { XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+                    XMFLOAT4(0.2f, 0.8f, 0.8f, 200.0f),
+                    XMFLOAT4(2.0f, 5.0f, 0.0f, 1.0f),
+                    XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) };
+    m_cbLighting.SetData(m_d3dContext.Get(), l);
+    buffer = m_cbLighting.GetBuffer();
+    m_d3dContext->PSSetConstantBuffers(1, 1, &buffer);
 }
 
 // Recreate all device resources and set them back to the current state.

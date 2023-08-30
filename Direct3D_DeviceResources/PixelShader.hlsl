@@ -1,6 +1,6 @@
 cbuffer cbColor : register(b0)
 {
-    float4 objectColor;
+    float4 surfaceColor;
 };
 
 struct PSInput
@@ -10,5 +10,5 @@ struct PSInput
 
 float4 main(PSInput i) : SV_TARGET
 {
-	return objectColor;
+    return surfaceColor;
 }

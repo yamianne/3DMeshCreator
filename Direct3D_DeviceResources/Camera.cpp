@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Camera.h"
 
+using namespace DirectX;
 
 Camera::Camera(Vector3 cameraPosition, float pitch, float yaw) :
     m_cameraPosition(cameraPosition), m_pitch(pitch), m_yaw(yaw)

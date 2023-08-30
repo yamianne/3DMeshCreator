@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "RenderingStructures.h"
 
 namespace DX
 {
@@ -42,7 +43,7 @@ namespace DX
         void SetWindow(HWND window, int width, int height) noexcept;
         bool WindowSizeChanged(int width, int height);
         void UpdateConstantBuffer(int width, int height);
-        void UpdateViewMatrixCB(Matrix& viewMatrix);
+        void UpdateViewMatrixCB(Vector3 camPos, Matrix& viewMatrix, Matrix& invviewMatrix);
         void HandleDeviceLost();
         void RegisterDeviceNotify(IDeviceNotify* deviceNotify) noexcept { m_deviceNotify = deviceNotify; }
         void Present();
@@ -105,8 +106,9 @@ namespace DX
         Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_noDepthWriteState;
         D3D11_VIEWPORT                                  m_screenViewport;
         DirectX::ConstantBuffer<DirectX::XMFLOAT4>      m_cbWindowAspectRatio;
-        DirectX::ConstantBuffer<DirectX::XMMATRIX>      m_cbViewMatrix;
+        DirectX::ConstantBuffer<DirectX::XMMATRIX[2]>   m_cbViewMatrix;
         DirectX::ConstantBuffer<DirectX::XMMATRIX>      m_cbProjectionMatrix;
+        DirectX::ConstantBuffer<Lighting>               m_cbLighting;
 
         // Direct3D properties.
         DXGI_FORMAT                                     m_backBufferFormat;

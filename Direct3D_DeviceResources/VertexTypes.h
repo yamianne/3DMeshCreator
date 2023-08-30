@@ -30,4 +30,12 @@ namespace VertexTypes
 
 		static const D3D11_INPUT_ELEMENT_DESC Layout[2];
 	};
+
+	struct VertexPositionNormal
+	{
+		DirectX::SimpleMath::Vector3 position;
+		DirectX::SimpleMath::Vector3 normal;
+
+		static const D3D11_INPUT_ELEMENT_DESC Layout[2];
+	};
 }

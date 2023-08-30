@@ -26,7 +26,7 @@ constexpr float MOVEMENT_GAIN = 0.05f;
 Application::Application() noexcept(false) : 
     m_camera({ 0.f, 1.5f, -5.f }, -0.29145679f, 0)
 {
-    srand(time(NULL));
+    srand(static_cast<unsigned int>(time(NULL)));
     m_deviceResources = std::make_unique<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
 }
@@ -42,7 +42,6 @@ void Application::Initialize(HWND window, int width, int height)
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
 
-    ImGuiIO& io = ImGui::GetIO();
     ImGui::StyleColorsDark();
     ImGui::GetStyle().WindowRounding = 10.0f;
     ImGui_ImplWin32_Init(window);
@@ -53,7 +52,7 @@ void Application::Initialize(HWND window, int width, int height)
     m_mouse->SetWindow(window);
     m_mouseState = m_mouse->GetState();
 
-    m_grid = new Grid(m_deviceResources->GetD3DDevice());
+    m_grid = new Grid(m_deviceResources->GetD3DDevice(), GeometryType::Triangle);
 }
 
 #pragma region Frame Update
@@ -88,14 +87,14 @@ void Application::ProcessMouseInput()
         }
         else if (mouse.middleButton) // Pan camera
         {
-            Vector3 move = (mouse.x * m_camera.GetRight() - mouse.y * m_camera.GetUp()) * PAN_GAIN;
+            Vector3 move = (static_cast<float>(mouse.x) * m_camera.GetRight() - static_cast<float>(mouse.y) * m_camera.GetUp()) * PAN_GAIN;
             m_camera.Move(move);
         }
 
     }
     if (mouse.scrollWheelValue != m_mouseState.scrollWheelValue) // Zoom camera
     {
-        m_camera.Move(m_camera.GetForward() * (mouse.scrollWheelValue - m_mouseState.scrollWheelValue) * SCALE_GAIN);
+        m_camera.Move(m_camera.GetForward() * static_cast<float>(mouse.scrollWheelValue - m_mouseState.scrollWheelValue) * SCALE_GAIN);
     }
     m_mouseState = mouse;
     m_mouse->SetMode(mouse.rightButton || mouse.middleButton ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
@@ -108,8 +107,8 @@ void Application::ProcessKeyboardInput()
     if (kb.S) m_camera.Move(-m_camera.GetForward() * MOVEMENT_GAIN);
     if (kb.A) m_camera.Move(-m_camera.GetRight() * MOVEMENT_GAIN);
     if (kb.D) m_camera.Move(m_camera.GetRight() * MOVEMENT_GAIN);
-    if (kb.E) m_camera.Move(m_camera.GetUp() * MOVEMENT_GAIN);
-    if (kb.Q) m_camera.Move(-m_camera.GetUp() * MOVEMENT_GAIN);
+    if (kb.Q) m_camera.Move(m_camera.GetUp() * MOVEMENT_GAIN);
+    if (kb.E) m_camera.Move(-m_camera.GetUp() * MOVEMENT_GAIN);
 }
 #pragma endregion
 
@@ -134,11 +133,13 @@ void Application::Render()
     if (m_camera.ViewMatrixNeedsUpdate())
     {
         m_viewMatrix = MatrixTransformations::CreateViewMatrix(m_camera.GetPosition(), m_camera.GetForward(), Vector3::UnitY);
-        m_deviceResources->UpdateViewMatrixCB(m_viewMatrix);
+        auto inverseView = m_viewMatrix.Invert();
+        std::vector<DirectX::XMMATRIX> matrices = { m_viewMatrix, inverseView };
+        m_deviceResources->UpdateViewMatrixCB(m_camera.GetPosition(), m_viewMatrix, inverseView);
         m_camera.ViewMatrixUpdated();
     }
 
-    context->OMSetDepthStencilState( m_deviceResources->GetDepthStencilState(), 0);
+    //context->OMSetDepthStencilState( m_deviceResources->GetDepthStencilState(), 0);
     m_grid->Render(context, m_selectedColor);
     for (auto& mesh : m_meshes)
         mesh->Render(context, m_selectedColor);
@@ -180,23 +181,53 @@ void Application::RenderGUI()
                 int m = rand() % 18 + 3;
                 float r = 0.5f * (rand() % 9 + 1);
                 float R = 1.0f * (rand() % 9 + 2);
-                m_meshes.push_back(new Torus(m_deviceResources->GetD3DDevice(), n, m, r, R));
+                m_meshes.push_back(new Torus(m_deviceResources->GetD3DDevice(), GeometryType::Quad, n, m, r, R));
             }
             if (ImGui::MenuItem("Sphere", "CTRL+S"))
             {
                 int n = rand() % 18 + 3;
                 int m = rand() % 18 + 3;
                 float r = 0.5f * (rand() % 9 + 1);
-                m_meshes.push_back(new Sphere(m_deviceResources->GetD3DDevice(), n, m, r));
+                m_meshes.push_back(new Sphere(m_deviceResources->GetD3DDevice(), GeometryType::Quad, n, m, r));
             }
             ImGui::EndMenu();
         }
+        if (ImGui::BeginMenu("View"))
+        {
+            if (ImGui::MenuItem("Help", "CTRL+H"))
+            {
+                m_helpWindowOpened = true;
+            }
+            ImGui::EndMenu();
+        }
+
         ImGui::EndMainMenuBar();
+    }
+
+    if (m_helpWindowOpened)
+    {
+        ImGui::Begin("Help", &m_helpWindowOpened);
+        ImGui::Text("Controls:");
+        ImGui::Text("W/S/A/D - Move camera forward/backward/left/right");
+        ImGui::Text("Q/E - Move camera up/down");
+        ImGui::Text("Mouse RMB - Rotate camera");
+        ImGui::Text("Mouse MMB - Pan camera");
+        ImGui::End();
     }
 
     // Application Settings window
     ImGui::Begin("Application Settings");
-    ImGui::Checkbox("Show grid", &m_grid->IsHidden);
+    ImGui::Checkbox("Hide grid", &m_grid->IsHidden);
+    ImGui::Text("Grid type");
+    if (ImGui::RadioButton("Tri", &m_grid->MeshType, GeometryType::Triangle))
+    {
+        m_grid->RecalculateGeometry(m_deviceResources->GetD3DDevice());
+    }
+    ImGui::SameLine();
+    if (ImGui::RadioButton("Quad", &m_grid->MeshType, GeometryType::Quad))
+    {
+        m_grid->RecalculateGeometry(m_deviceResources->GetD3DDevice());
+    }
     ImGui::ColorEdit3("Clear color", (float*)&m_clearColor);
     ImGui::ColorEdit3("Selected color", (float*)&m_selectedColor);
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -397,8 +428,8 @@ void Application::CreateDeviceDependentResources()
     m_meshes.push_back(new Point(device, Vector3{ 1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f }));
     m_meshes.push_back(new Point(device, Vector3{ 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f }));
     m_meshes.push_back(new Point(device, Vector3{ 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f }));
-    m_meshes.push_back(new Torus(device));
-    m_meshes.push_back(new Sphere(device));
+    m_meshes.push_back(new Torus(device, GeometryType::Quad));
+    m_meshes.push_back(new Sphere(device, GeometryType::Triangle, 32, 32, 2.0f));
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.

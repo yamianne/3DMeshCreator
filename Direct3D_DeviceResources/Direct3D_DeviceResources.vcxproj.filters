@@ -14,11 +14,17 @@
     <Filter Include="Shaders\Point">
       <UniqueIdentifier>{2c2da705-36b0-4f38-836b-58954fa56bd7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shapes">
-      <UniqueIdentifier>{0e18d474-35e7-4b18-a408-23aa9b7c68ad}</UniqueIdentifier>
-    </Filter>
     <Filter Include="imgui">
       <UniqueIdentifier>{134585f4-b4d7-4315-ae25-5cc7d3f36bb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneObjects">
+      <UniqueIdentifier>{0e18d474-35e7-4b18-a408-23aa9b7c68ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneObjects\Shapes">
+      <UniqueIdentifier>{e5e10bda-97f1-4218-b061-eb04edc843f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneObjects\Primitives">
+      <UniqueIdentifier>{d81781ca-5585-4c9a-80a2-7b1a327f191f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,15 +36,11 @@
     <ClInclude Include="DeviceResources.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Edge.h" />
     <ClInclude Include="VertexTypes.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Shapes</Filter>
-    </ClInclude>
-    <ClInclude Include="Point.h">
-      <Filter>Shapes</Filter>
+      <Filter>SceneObjects</Filter>
     </ClInclude>
     <ClInclude Include="MatrixTransformations.h" />
     <ClInclude Include="Camera.h" />
@@ -69,20 +71,35 @@
     <ClInclude Include="imgui\imgui_stdlib.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Grid.h">
-      <Filter>Shapes</Filter>
-    </ClInclude>
     <ClInclude Include="DXHelpers.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="ReadShaderBytecode.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Torus.h">
-      <Filter>Shapes</Filter>
+    <ClInclude Include="SceneObject.h">
+      <Filter>SceneObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderingStructures.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="IParametric.h">
+      <Filter>SceneObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>SceneObjects\Shapes</Filter>
     </ClInclude>
     <ClInclude Include="Sphere.h">
-      <Filter>Shapes</Filter>
+      <Filter>SceneObjects\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Torus.h">
+      <Filter>SceneObjects\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Point.h">
+      <Filter>SceneObjects\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="Edge.h">
+      <Filter>SceneObjects\Primitives</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -96,10 +113,7 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Shapes</Filter>
-    </ClCompile>
-    <ClCompile Include="Point.cpp">
-      <Filter>Shapes</Filter>
+      <Filter>SceneObjects</Filter>
     </ClCompile>
     <ClCompile Include="MatrixTransformations.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -127,17 +141,23 @@
     <ClCompile Include="imgui\imgui_stdlib.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Grid.cpp">
-      <Filter>Shapes</Filter>
-    </ClCompile>
     <ClCompile Include="DXHelpers.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="Torus.cpp">
-      <Filter>Shapes</Filter>
+    <ClCompile Include="SceneObject.cpp">
+      <Filter>SceneObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid.cpp">
+      <Filter>SceneObjects\Shapes</Filter>
     </ClCompile>
     <ClCompile Include="Sphere.cpp">
-      <Filter>Shapes</Filter>
+      <Filter>SceneObjects\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Torus.cpp">
+      <Filter>SceneObjects\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Point.cpp">
+      <Filter>SceneObjects\Shapes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +190,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="GeometryShader_Point.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader_Phong.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShader_Phong.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

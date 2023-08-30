@@ -72,10 +72,12 @@ private:
     std::unique_ptr<DirectX::Mouse>             m_mouse;
     DirectX::Mouse::State                       m_mouseState;
 
-    std::vector<Mesh*>                          m_meshes;
+    std::vector<SceneObject*>                   m_meshes;
     Grid*                                       m_grid;
     XMFLOAT4                                    m_clearColor    =   { 0.275f, 0.392f, 0.47f, 1.00f };
     XMFLOAT4                                    m_selectedColor =   { 0.67f, 0.48f, 0.49f, 1.00f };
+
+    bool                                        m_helpWindowOpened = true;
 
     // Rendering loop timer.
     DX::StepTimer                               m_timer;

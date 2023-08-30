@@ -1,7 +1,7 @@
 #pragma once
-#include "Mesh.h"
+#include "SceneObject.h"
 
-class Point : public Mesh
+class Point : public SceneObject
 {
 public:
 	Point(ID3D11Device* device, std::string name, Vector3 position);
